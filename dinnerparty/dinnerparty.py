@@ -10,4 +10,11 @@ else:
         name = input("> ")
         friends[name] = 0
 
+    total_amount = float(input("Enter the total amount: "))
+
+    split_amount = round(total_amount / num_of_friends, 2)
+
+    for name in friends:
+        friends[name] = split_amount
+
     print(friends)

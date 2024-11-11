@@ -1,8 +1,8 @@
-board = [
-    ["X", "O", "X"],
-    ["O", "X", "O"],
-    ["X", "X", "O"]
-]
+cells = input("Enter cells: ").strip()
 
-for row in board:
-    print(" ".join(row))
+print("---------")
+
+for i in range(0, 9, 3):
+    print(f"| {cells[i]} {cells[i+1]} {cells[i+2]} |")
+
+print("---------")

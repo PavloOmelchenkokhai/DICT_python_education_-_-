@@ -1,37 +1,35 @@
+# Функція для виведення ігрового поля
 def print_board(cells):
     print("---------")
     for i in range(0, 9, 3):
         print(f"| {cells[i]} {cells[i+1]} {cells[i+2]} |")
     print("---------")
 
-def check_winner(cells, symbol):
-    win_positions = [
-        (0, 1, 2), (3, 4, 5), (6, 7, 8),
-        (0, 3, 6), (1, 4, 7), (2, 5, 8),
-        (0, 4, 8), (2, 4, 6)
-    ]
-    return any(cells[a] == cells[b] == cells[c] == symbol for a, b, c in win_positions)
-
-def analyze_game(cells):
-    x_count = cells.count('X')
-    o_count = cells.count('O')
-    empty_count = cells.count('_')
-
-    x_wins = check_winner(cells, 'X')
-    o_wins = check_winner(cells, 'O')
-
-    if abs(x_count - o_count) > 1 or (x_wins and o_wins):
-        return "Impossible"
-    elif x_wins:
-        return "X wins"
-    elif o_wins:
-        return "O wins"
-    elif empty_count > 0:
-        return "Game not finished"
-    else:
-        return "Draw"
+def get_index(row, col):
+    return (row - 1) * 3 + (col - 1)
 
 cells = input("Enter cells: ")
 print_board(cells)
-result = analyze_game(cells)
-print(result)
+
+while True:
+    coordinates = input("Enter the coordinates: ").split()
+
+    if not all(coord.isdigit() for coord in coordinates):
+        print("You should enter numbers!")
+        continue
+
+    row, col = map(int, coordinates)
+
+    if not (1 <= row <= 3) or not (1 <= col <= 3):
+        print("Coordinates should be from 1 to 3!")
+        continue
+
+    index = get_index(row, col)
+
+    if cells[index] != '_':
+        print("This cell is occupied! Choose another one!")
+        continue
+
+    cells = cells[:index] + 'X' + cells[index + 1:]
+    print_board(cells)
+    break

@@ -10,5 +10,24 @@ while True:
         pencil = int(pencil)
         break
 
+current_player  = first_player
+
 print("|" * pencil)
-print(f"{first_player} is going first!")
+print(f"{current_player} is going first!")
+
+while True:
+    try:
+        taken = int(input("> "))
+        if taken not in [1, 2, 3]:
+            print("Possible values: '1', '2' or '3'")
+        elif taken > pencil:
+            print("Too many pencils were taken")
+        else:
+            pencil -= taken
+            break
+    except ValueError:
+        print("Please input a number between 1 and 3.")
+
+    current_player = player1 if current_player == player2 else player2
+
+    print("Game over!")

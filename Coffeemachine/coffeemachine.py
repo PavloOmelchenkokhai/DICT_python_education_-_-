@@ -12,14 +12,6 @@ coffee_types = {
     "3": {"name": "cappuccino", "water": 200, "milk": 100, "coffee_beans": 12, "cost": 6}
 }
 
-def display_status():
-    print("\nThe coffee machine has:")
-    print(f"{resources['water']} of water")
-    print(f"{resources['milk']} of milk")
-    print(f"{resources['coffee_beans']} of coffee beans")
-    print(f"{resources['disposable_cups']} of disposable cups")
-    print(f"{resources['money']} of money\n")
-
 def check_resources(coffee_type):
     for ingredient, amount in coffee_type.items():
         if ingredient in resources and resources[ingredient] < amount:
@@ -28,7 +20,7 @@ def check_resources(coffee_type):
     return True
 
 def buy():
-    choice = input("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino: ")
+    choice = input("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino, back - to main menu: ")
     if choice in coffee_types:
         coffee = coffee_types[choice]
         if check_resources(coffee):
@@ -48,18 +40,27 @@ def fill():
     resources["disposable_cups"] += int(input("Write how many disposable coffee cups you want to add: "))
 
 def take():
-    print(f"I gave you ${resources['money']}")
+    print(f"I gave you {resources['money']}")
     resources["money"] = 0
 
+def remaining():
+    print("\nThe coffee machine has:")
+    print(f"{resources['water']} of water")
+    print(f"{resources['milk']} of milk")
+    print(f"{resources['coffee_beans']} of coffee beans")
+    print(f"{resources['disposable_cups']} of disposable cups")
+    print(f"{resources['money']} of money\n")
+
 while True:
-    display_status()
-    action = input("Write action (buy, fill, take, exit): ")
+    action = input("Write action (buy, fill, take, remaining, exit): ")
     if action == "buy":
         buy()
     elif action == "fill":
         fill()
     elif action == "take":
         take()
+    elif action == "remaining":
+        remaining()
     elif action == "exit":
         break
     else:

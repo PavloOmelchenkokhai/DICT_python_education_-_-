@@ -1,29 +1,66 @@
-print("Write how many ml of water the coffee machine has:")
-water_available = int(input("> "))
+resources = {
+    "water": 400,
+    "milk": 540,
+    "coffee_beans": 120,
+    "disposable_cups": 9,
+    "money": 550
+}
 
-print("Write how many ml of milk the coffee machine has:")
-milk_available = int(input("> "))
+coffee_types = {
+    "1": {"name": "espresso", "water": 250, "milk": 0, "coffee_beans": 16, "cost": 4},
+    "2": {"name": "latte", "water": 350, "milk": 75, "coffee_beans": 20, "cost": 7},
+    "3": {"name": "cappuccino", "water": 200, "milk": 100, "coffee_beans": 12, "cost": 6}
+}
 
-print("Write how many grams of coffee beans the coffee machine has:")
-coffee_beans_available = int(input("> "))
+def display_status():
+    print("\nThe coffee machine has:")
+    print(f"{resources['water']} of water")
+    print(f"{resources['milk']} of milk")
+    print(f"{resources['coffee_beans']} of coffee beans")
+    print(f"{resources['disposable_cups']} of disposable cups")
+    print(f"{resources['money']} of money\n")
 
-print("Write how many cups of coffee you will need:")
-cups_needed = int(input("> "))
+def check_resources(coffee_type):
+    for ingredient, amount in coffee_type.items():
+        if ingredient in resources and resources[ingredient] < amount:
+            print(f"Sorry, not enough {ingredient}!")
+            return False
+    return True
 
-water_per_cup = 200
-milk_per_cup = 50
-coffee_beans_per_cup = 15
+def buy():
+    choice = input("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino: ")
+    if choice in coffee_types:
+        coffee = coffee_types[choice]
+        if check_resources(coffee):
+            resources["water"] -= coffee["water"]
+            resources["milk"] -= coffee["milk"]
+            resources["coffee_beans"] -= coffee["coffee_beans"]
+            resources["disposable_cups"] -= 1
+            resources["money"] += coffee["cost"]
+            print(f"I have enough resources, making you a {coffee['name']}!")
+    elif choice == "back":
+        return
 
-max_cups = min(
-    water_available // water_per_cup,
-    milk_available // milk_per_cup,
-    coffee_beans_available // coffee_beans_per_cup
-)
+def fill():
+    resources["water"] += int(input("Write how many ml of water you want to add: "))
+    resources["milk"] += int(input("Write how many ml of milk you want to add: "))
+    resources["coffee_beans"] += int(input("Write how many grams of coffee beans you want to add: "))
+    resources["disposable_cups"] += int(input("Write how many disposable coffee cups you want to add: "))
 
-if max_cups == cups_needed:
-    print("Yes, I can make that amount of coffee")
-elif max_cups > cups_needed:
-    extra_cups = max_cups - cups_needed
-    print(f"Yes, I can make that amount of coffee (and even {extra_cups} more than that)")
-else:
-    print(f"No, I can make only {max_cups} cups of coffee")
+def take():
+    print(f"I gave you ${resources['money']}")
+    resources["money"] = 0
+
+while True:
+    display_status()
+    action = input("Write action (buy, fill, take, exit): ")
+    if action == "buy":
+        buy()
+    elif action == "fill":
+        fill()
+    elif action == "take":
+        take()
+    elif action == "exit":
+        break
+    else:
+        print("Invalid action!")

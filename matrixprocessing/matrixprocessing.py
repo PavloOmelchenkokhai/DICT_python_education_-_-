@@ -17,7 +17,7 @@ def read_matrix():
 def print_matrix(matrix):
     """Функція для друку матриці."""
     for row in matrix:
-        print(" ".join(map(str, row)))
+        print(" ".join(f"{x:.2f}" for x in row))
 
 def determinant(matrix):
     """Рекурсивна функція для обчислення визначника квадратної матриці."""
@@ -32,6 +32,29 @@ def determinant(matrix):
         minor = [row[:col] + row[col + 1:] for row in matrix[1:]]
         det += ((-1) ** col) * matrix[0][col] * determinant(minor)
     return det
+
+def inverse_matrix(matrix):
+    """Функція для обчислення зворотної матриці."""
+    det = determinant(matrix)
+    if det == 0:
+        return None
+    size = len(matrix)
+
+    # Обчислення матриці доповнень
+    cofactors = []
+    for row in range(size):
+        cofactor_row = []
+        for col in range(size):
+            minor = [matrix[i][:col] + matrix[i][col + 1:] for i in range(size) if i != row]
+            cofactor_row.append(((-1) ** (row + col)) * determinant(minor))
+        cofactors.append(cofactor_row)
+
+    # Транспонування матриці доповнень
+    cofactors = [[cofactors[j][i] for j in range(size)] for i in range(size)]
+
+    # Множення на 1/детермінант
+    inverse = [[cofactors[i][j] / det for j in range(size)] for i in range(size)]
+    return inverse
 
 def add_matrices():
     """Функція для додавання двох матриць."""
@@ -106,6 +129,19 @@ def calculate_determinant():
     print("The result is:")
     print(result)
 
+def find_inverse_matrix():
+    """Функція для знаходження зворотної матриці."""
+    matrix, rows, cols = read_matrix()
+    if not matrix or rows != cols:
+        print("The operation cannot be performed.")
+        return
+    inverse = inverse_matrix(matrix)
+    if inverse is None:
+        print("This matrix doesn't have an inverse.")
+    else:
+        print("The result is:")
+        print_matrix(inverse)
+
 def main_menu():
     """Головне меню програми."""
     while True:
@@ -114,6 +150,7 @@ def main_menu():
         print("3. Multiply matrices")
         print("4. Transpose matrix")
         print("5. Calculate a determinant")
+        print("6. Inverse matrix")
         print("0. Exit")
         choice = input("Your choice: > ").strip()
         if choice == "1":
@@ -126,6 +163,8 @@ def main_menu():
             transpose_matrix()
         elif choice == "5":
             calculate_determinant()
+        elif choice == "6":
+            find_inverse_matrix()
         elif choice == "0":
             break
         else:

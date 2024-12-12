@@ -1,69 +1,135 @@
-def transpose_matrix(matrix, method):
-    """Транспонує матрицю відповідно до вибраного методу."""
-    rows, cols, mat = matrix
-    if method == "1":  # Main diagonal
-        result = [[mat[j][i] for j in range(rows)] for i in range(cols)]
-    elif method == "2":  # Side diagonal
-        result = [[mat[rows - j - 1][cols - i - 1] for j in range(rows)] for i in range(cols)]
-    elif method == "3":  # Vertical line
-        result = [[mat[i][cols - j - 1] for j in range(cols)] for i in range(rows)]
-    elif method == "4":  # Horizontal line
-        result = [[mat[rows - i - 1][j] for j in range(cols)] for i in range(rows)]
+def read_matrix():
+    """Функція для зчитування матриці від користувача."""
+    try:
+        rows, cols = map(int, input("Enter matrix size: > ").split())
+        print("Enter matrix:")
+        matrix = []
+        for _ in range(rows):
+            row = list(map(float, input("> ").split()))
+            if len(row) != cols:
+                raise ValueError("Invalid row size")
+            matrix.append(row)
+        return matrix, rows, cols
+    except ValueError as e:
+        print(f"Error: {e}")
+        return None, 0, 0
+
+def print_matrix(matrix):
+    """Функція для друку матриці."""
+    for row in matrix:
+        print(" ".join(map(str, row)))
+
+def determinant(matrix):
+    """Рекурсивна функція для обчислення визначника квадратної матриці."""
+    size = len(matrix)
+    if size == 1:
+        return matrix[0][0]
+    if size == 2:
+        return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]
+
+    det = 0
+    for col in range(size):
+        minor = [row[:col] + row[col + 1:] for row in matrix[1:]]
+        det += ((-1) ** col) * matrix[0][col] * determinant(minor)
+    return det
+
+def add_matrices():
+    """Функція для додавання двох матриць."""
+    matrix1, rows1, cols1 = read_matrix()
+    if not matrix1:
+        return
+    matrix2, rows2, cols2 = read_matrix()
+    if not matrix2 or rows1 != rows2 or cols1 != cols2:
+        print("The operation cannot be performed.")
+        return
+    result = [[matrix1[i][j] + matrix2[i][j] for j in range(cols1)] for i in range(rows1)]
+    print("The result is:")
+    print_matrix(result)
+
+def multiply_matrix_by_constant():
+    """Функція для множення матриці на константу."""
+    matrix, rows, cols = read_matrix()
+    if not matrix:
+        return
+    try:
+        constant = float(input("Enter constant: > "))
+        result = [[element * constant for element in row] for row in matrix]
+        print("The result is:")
+        print_matrix(result)
+    except ValueError:
+        print("Invalid constant value.")
+
+def multiply_matrices():
+    """Функція для множення двох матриць."""
+    matrix1, rows1, cols1 = read_matrix()
+    if not matrix1:
+        return
+    matrix2, rows2, cols2 = read_matrix()
+    if not matrix2 or cols1 != rows2:
+        print("The operation cannot be performed.")
+        return
+    result = [[sum(matrix1[i][k] * matrix2[k][j] for k in range(cols1)) for j in range(cols2)] for i in range(rows1)]
+    print("The result is:")
+    print_matrix(result)
+
+def transpose_matrix():
+    """Функція для транспонування матриці."""
+    print("1. Main diagonal")
+    print("2. Side diagonal")
+    print("3. Vertical line")
+    print("4. Horizontal line")
+    choice = input("Your choice: > ").strip()
+    matrix, rows, cols = read_matrix()
+    if not matrix:
+        return
+    if choice == "1":
+        result = [[matrix[j][i] for j in range(rows)] for i in range(cols)]
+    elif choice == "2":
+        result = [[matrix[rows - 1 - j][cols - 1 - i] for j in range(rows)] for i in range(cols)]
+    elif choice == "3":
+        result = [list(reversed(row)) for row in matrix]
+    elif choice == "4":
+        result = list(reversed(matrix))
     else:
-        result = "Invalid transpose option."
-    return result
+        print("Invalid choice.")
+        return
+    print("The result is:")
+    print_matrix(result)
 
+def calculate_determinant():
+    """Функція для обчислення визначника."""
+    matrix, rows, cols = read_matrix()
+    if not matrix or rows != cols:
+        print("The operation cannot be performed.")
+        return
+    result = determinant(matrix)
+    print("The result is:")
+    print(result)
 
-def main():
+def main_menu():
+    """Головне меню програми."""
     while True:
         print("\n1. Add matrices")
         print("2. Multiply matrix by a constant")
         print("3. Multiply matrices")
         print("4. Transpose matrix")
+        print("5. Calculate a determinant")
         print("0. Exit")
-        choice = input("Your choice: > ")
-
-        if choice == "0":
-            break
-        elif choice == "1":
-            print("Enter size of first matrix:")
-            matrix1 = read_matrix("Enter size of first matrix")
-            print("Enter size of second matrix:")
-            matrix2 = read_matrix("Enter size of second matrix")
-            result = add_matrices(matrix1, matrix2)
-            print_matrix(result)
+        choice = input("Your choice: > ").strip()
+        if choice == "1":
+            add_matrices()
         elif choice == "2":
-            print("Enter size of matrix:")
-            matrix = read_matrix("Enter size of matrix")
-            while True:
-                try:
-                    constant = float(input("Enter constant: > "))
-                    break
-                except ValueError:
-                    print("Помилка! Введіть число.")
-            result = multiply_matrix_by_constant(matrix, constant)
-            print_matrix(result)
+            multiply_matrix_by_constant()
         elif choice == "3":
-            print("Enter size of first matrix:")
-            matrix1 = read_matrix("Enter size of first matrix")
-            print("Enter size of second matrix:")
-            matrix2 = read_matrix("Enter size of second matrix")
-            result = multiply_matrices(matrix1, matrix2)
-            print_matrix(result)
+            multiply_matrices()
         elif choice == "4":
-            print("\n1. Main diagonal")
-            print("2. Side diagonal")
-            print("3. Vertical line")
-            print("4. Horizontal line")
-            method = input("Your choice: > ")
-            print("Enter matrix size:")
-            matrix = read_matrix("Enter matrix size")
-            result = transpose_matrix(matrix, method)
-            print_matrix(result)
+            transpose_matrix()
+        elif choice == "5":
+            calculate_determinant()
+        elif choice == "0":
+            break
         else:
-            print("Помилка! Виберіть опцію з меню.")
-
+            print("Invalid choice. Please select a valid option.")
 
 # Запуск програми
-if __name__ == "__main__":
-    main()
+main_menu()

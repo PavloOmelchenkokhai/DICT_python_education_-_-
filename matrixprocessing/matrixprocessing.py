@@ -1,5 +1,5 @@
-def read_matrix():
-    """Зчитує матрицю з вводу з перевіркою правильності вводу."""
+def read_matrix_with_validation():
+    """Зчитує матрицю з перевіркою правильності вводу."""
     while True:
         try:
             n, m = map(int, input("Введіть кількість рядків і стовпців через пробіл: ").split())
@@ -21,18 +21,20 @@ def read_matrix():
     return n, m, matrix
 
 
-def add_matrices(matrix_a, matrix_b):
-    """Додає дві матриці."""
-    n_a, m_a, a = matrix_a
-    n_b, m_b, b = matrix_b
+def read_constant():
+    """Зчитує константу з перевіркою правильності вводу."""
+    while True:
+        try:
+            constant = int(input("Введіть константу (ціле число): "))
+            return constant
+        except ValueError:
+            print("Помилка! Введіть ціле число.")
 
-    if n_a != n_b or m_a != m_b:
-        return "ERROR"
 
-    result = []
-    for i in range(n_a):
-        row = [a[i][j] + b[i][j] for j in range(m_a)]
-        result.append(row)
+def multiply_matrix_by_constant(matrix, constant):
+    """Множить матрицю на константу."""
+    _, _, a = matrix
+    result = [[element * constant for element in row] for row in a]
     return result
 
 
@@ -43,16 +45,12 @@ def print_matrix(matrix):
 
 
 # Основна програма
-print("Введення першої матриці:")
-matrix_a = read_matrix()
+print("Введення матриці:")
+matrix = read_matrix_with_validation()
 
-print("Введення другої матриці:")
-matrix_b = read_matrix()
+constant = read_constant()
 
-result = add_matrices(matrix_a, matrix_b)
+result = multiply_matrix_by_constant(matrix, constant)
 
-if result == "ERROR":
-    print("ERROR")
-else:
-    print("Результат додавання матриць:")
-    print_matrix(result)
+print("Результат множення матриці на константу:")
+print_matrix(result)
